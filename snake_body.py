@@ -16,29 +16,16 @@ class SnakeBody():
     def move(self, screen, head, speed):
         afterBelly = self.body[0]
         if head.direction != self.body[0].direction:
-            self.rotateBelly(self.body[0], head)
+            self.body[0].rotate(head)
         self.moveHeadBody(self.body[0], head)
 
         for belly in self.body[1:]:
             beforeBelly = belly
             if head.direction != afterBelly.direction:
-                self.rotateBelly(belly, afterBelly)
+                belly.rotate(afterBelly)
             self.moveHeadBody(self.body[0], afterBelly)
 
             afterBelly = beforeBelly
-
-    def rotateBelly(self, belly, head):
-        if belly.direction == "left":
-            angle = 90 if head.direction == "up" else -90
-        elif belly.direction == "right":
-            angle = -90 if head.direction == "up" else 90
-        elif belly.direction == "up":
-            angle = -90 if head.direction == "left" else 90
-        elif belly.direction == "down":
-            angle = 90 if head.direction == "left" else -90
-
-        belly.image = pygame.transform.rotate(belly.image, angle)
-        belly.rect = belly.image.get_rect()
 
     def moveHeadBody(self, belly, head):
         if head.direction == "left":
