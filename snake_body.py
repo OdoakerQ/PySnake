@@ -1,33 +1,49 @@
 import pygame
 import os
-
+import copy
 from pygame.transform import rotate
 from belly import Belly
 
 class SnakeBody():
-    def __init__(self, cords, direction):
-        self.body = []
-        self.first_belly = Belly(19, 19, cords, direction)
-        self.body.append(self.first_belly)
+    def __init__(self, cords, direction, options):
+        self.bellies = []
+        self.options = options
+        for _ in range(2):
+            lastBelly = Belly(options.part_width, options.bellyWidth, cords, direction)
+            self.bellies.append(lastBelly)
+            cords = lastBelly.rect.midright
 
     def add(self, belly):
-        self.body.add(belly)
+        self.bellies.add(belly)
 
-    def move(self, screen, head, speed):
-        afterBelly = self.body[0]
-        if head.direction != self.body[0].direction:
-            self.body[0].rotate(head)
-        self.moveHeadBody(self.body[0], head)
+    def move(self, screen, head):
+        firstBelly = self.bellies[0]
+        cords = self.getCords(firstBelly)
+        head_part = Belly(self.options.part_width, self.options.bellyWidth, cords, firstBelly.direction)
+        if head.direction != self.bellies[0].direction:
+            self.bellies[0].rotate(head)
+        self.movePart(self.bellies[0], head)
 
-        for belly in self.body[1:]:
-            beforeBelly = belly
-            if head.direction != afterBelly.direction:
-                belly.rotate(afterBelly)
-            self.moveHeadBody(self.body[0], afterBelly)
+        for belly in self.bellies[1:]:
+            cords = self.getCords(head_part)
+            beforeBelly = Belly(self.options.part_width, self.options.bellyWidth, cords, belly.direction)
+            if head_part.direction != belly.direction:
+                belly.rotate(belly)
+            self.movePart(belly, head_part)
 
-            afterBelly = beforeBelly
+            head_part = beforeBelly
 
-    def moveHeadBody(self, belly, head):
+    def getCords(self, head):
+        if head.direction == "left":
+            return head.rect.midleft
+        elif head.direction == "right":
+            return head.rect.midright
+        elif head.direction == "up":
+            return head.rect.midtop
+        elif head.direction == "down":
+            return head.rect.midbottom
+
+    def movePart(self, belly, head):
         if head.direction == "left":
             belly.rect.midleft = head.rect.midright
         elif head.direction == "right":
@@ -38,5 +54,5 @@ class SnakeBody():
             belly.rect.midbottom = head.rect.midtop
 
     def blit(self, screen):
-        for belly in self.body:
+        for belly in self.bellies:
             belly.blit(screen)

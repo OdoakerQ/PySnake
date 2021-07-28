@@ -5,7 +5,7 @@ class KeyboardHandler:
         self.primaryDirection = direction
         self.lastDirection = direction
 
-    def handleKey(self, event, screen, head, body, options):
+    def handleKey(self, event, screen, head, body, display, options):
         key = event.key
 
         newDirection = self.setNewDirection(key)
@@ -14,16 +14,15 @@ class KeyboardHandler:
             return
 
         if newDirection == "left" and not self.isDirectionConflict("left"):
-            head.rotate(key)
-            head.direction = "left"
+            head.rotate(key, body.bellies[0], self.primaryDirection, newDirection)
         elif newDirection == "right" and not self.isDirectionConflict("right"):
-            head.rotate(key)
+            head.rotate(key, body.bellies[0], self.primaryDirection, newDirection)
             head.direction = "right"
         elif newDirection == "up" and not self.isDirectionConflict("up"):
-            head.rotate(key)
+            head.rotate(key, body.bellies[0], self.primaryDirection, newDirection)
             head.direction = "up"
         elif newDirection == "down" and not self.isDirectionConflict("down"):
-            head.rotate(key)
+            head.rotate(key, body.bellies[0], self.primaryDirection, newDirection)
             head.direction = "down"
         else:
             return
@@ -32,11 +31,8 @@ class KeyboardHandler:
 
         screen.fill(options.background_color)
 
-        head.blit(screen)
-        body.blit(screen)
+        display.show(screen, [head, body])
 
-        pygame.display.update()
-        pygame.display.flip()
 
     def setNewDirection(self, key):
         if key == pygame.K_a:
