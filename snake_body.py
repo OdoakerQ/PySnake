@@ -8,50 +8,49 @@ class SnakeBody():
     def __init__(self, cords, direction, options):
         self.bellies = []
         self.options = options
-        for _ in range(2):
-            lastBelly = Belly(options.part_width, options.bellyWidth, cords, direction)
+        firstBelly = Belly(options.belly_width, options.square_side, cords, direction, True)
+        self.bellies.append(firstBelly)
+        cords = firstBelly.getCords()
+
+        for _ in range(options.belly_number - 1):
+            lastBelly = Belly(options.belly_width, options.square_side, cords, direction)
             self.bellies.append(lastBelly)
-            cords = lastBelly.rect.midright
+            cords = lastBelly.getCords()
 
-    def add(self, belly):
-        self.bellies.add(belly)
+    def enlarge(self):
+        cords = self.bellies[-1].getCords()
+        direction = self.bellies[-1].direction
 
-    def move(self, screen, head):
+        firstBelly = Belly(self.options.belly_width, self.options.square_side, cords, direction)
+        self.bellies.append(firstBelly)
+        cords = firstBelly.getCords()
+
+
+        for _ in range(self.options.belly_number - 1):
+            lastBelly = Belly(self.options.belly_width, self.options.square_side, cords, direction)
+            self.bellies.append(lastBelly)
+            cords = lastBelly.getCords()
+
+    def move(self, head):
         firstBelly = self.bellies[0]
-        cords = self.getCords(firstBelly)
-        head_part = Belly(self.options.part_width, self.options.bellyWidth, cords, firstBelly.direction)
-        if head.direction != self.bellies[0].direction:
-            self.bellies[0].rotate(head)
-        self.movePart(self.bellies[0], head)
+        head_belly_direction = copy.deepcopy(firstBelly.direction)
+        head_belly_rect = copy.deepcopy(firstBelly.rect)
+        if firstBelly.direction != head.direction:
+            firstBelly.rotate(head.direction)
+        firstBelly.move(head.direction, head.rect)
 
         for belly in self.bellies[1:]:
-            cords = self.getCords(head_part)
-            beforeBelly = Belly(self.options.part_width, self.options.bellyWidth, cords, belly.direction)
-            if head_part.direction != belly.direction:
-                belly.rotate(belly)
-            self.movePart(belly, head_part)
+            before_belly_direction = copy.deepcopy(belly.direction)
+            before_belly_rect = copy.deepcopy(belly.rect)
+            if belly.direction != head_belly_direction:
+                belly.rotate(head_belly_direction)
+            belly.move(head_belly_direction, head_belly_rect)
 
-            head_part = beforeBelly
+            head_belly_direction = before_belly_direction
+            head_belly_rect = before_belly_rect
 
-    def getCords(self, head):
-        if head.direction == "left":
-            return head.rect.midleft
-        elif head.direction == "right":
-            return head.rect.midright
-        elif head.direction == "up":
-            return head.rect.midtop
-        elif head.direction == "down":
-            return head.rect.midbottom
-
-    def movePart(self, belly, head):
-        if head.direction == "left":
-            belly.rect.midleft = head.rect.midright
-        elif head.direction == "right":
-            belly.rect.midright = head.rect.midleft
-        elif head.direction == "up":
-            belly.rect.midtop = head.rect.midbottom
-        elif head.direction == "down":
-            belly.rect.midbottom = head.rect.midtop
+    def getHeadBelly(self):
+        return self.bellies[0]
 
     def blit(self, screen):
         for belly in self.bellies:

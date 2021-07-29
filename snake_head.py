@@ -7,6 +7,7 @@ class SnakeHead():
         self.cords = (x, y)
         self.rect = self.image.get_rect(center = (self.cords))
         self.direction = direction
+        self.spawnRotate()
         self.options = options
 
     def getBackHead(self):
@@ -37,6 +38,19 @@ class SnakeHead():
         self.direction = newDirection
 
         self.rect = self.image.get_rect(topleft = self.rect.topleft)
+
+    def spawnRotate(self):
+        if self.direction == "left":
+            return
+        elif self.direction == "right":
+            angle = 180
+        elif self.direction == "up":
+            angle = -90
+        elif self.direction == "down":
+            angle = 90
+
+        self.image = pygame.transform.rotate(self.image, angle)
+        self.rect = self.image.get_rect(center = (self.cords))
 
     def setRectAfterRotation(self, headBelly, primaryDirection, newDirection):
         oldDirection = primaryDirection
