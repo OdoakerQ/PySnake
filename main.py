@@ -1,4 +1,5 @@
 import pygame
+import os
 from snake_head import SnakeHead
 from snake_body import SnakeBody
 from boosters import Boosters
@@ -8,7 +9,7 @@ import display as disply
 import time
 import randomizer as rand
 from keyboard_handler import KeyboardHandler
-from time import time
+from time import time, sleep
 
 def main():
     pygame.init()
@@ -36,11 +37,21 @@ def main():
         head.move()
         display.show(screen, objects)
         body.move(head)
-        objects = [head, body, boosters]
-        is_fruit_colison = fruit.checkIfCollision(head)
-        if is_fruit_colison:
+        is_head_collision = head.checkIfCollision(body)
+        if is_head_collision:
+            gama_over_img = pygame.image.load(os.path.join(options.path, "images/game_over.png")).convert_alpha()
+            screen.blit(gama_over_img, (0, 0))
+            pygame.display.flip()
+            sleep(3)
+            pygame.quit()
+            exit()
+
+        is_fruit_collision = fruit.checkIfCollision(head)
+        if is_fruit_collision:
             body.enlarge()
             boosters.elements.remove(fruit)
+            object_elements = [head]
+            for belly in body.bellies: object_elements.append(belly)
             spawn_x, spawn_y = randomizer.randomizeFruitCords(object_elements)
             fruit = Fruit(spawn_x, spawn_y, options)
             boosters.add(fruit)

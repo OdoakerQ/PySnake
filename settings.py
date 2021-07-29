@@ -5,7 +5,7 @@ class Settings():
         self.path = os.path.dirname(__file__)
         self.time = 0.01
         self.display_size = [1023, 683]
-        self.fruit_size = [22, 15]
+        self.fruit_size = [24, 17]
         self.fruit_distance = 110
         self.square_side = 20
         self.speed = 5

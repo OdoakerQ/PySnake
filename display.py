@@ -7,13 +7,12 @@ class Display:
         self.display_size = options.display_size
 
     def show(self, screen, objects):
-        screen.fill((0,0,0))
+        # screen.fill((0,0,0))
         screen.blit(self.background, (0,0))
 
         for object in objects:
             object.blit(screen)
 
-        pygame.display.update()
         pygame.display.flip()
 
 

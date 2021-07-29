@@ -23,6 +23,12 @@ class SnakeHead():
     def getDirection(self):
         return self.direction
 
+    def checkIfCollision(self, body):
+        for belly in body.bellies:
+            if self.rect.colliderect(belly.rect) == 1:
+                return True
+        return False
+
     def rotate(self, key, headBelly, primaryDirection, newDirection):
         if self.direction == "left":
             angle = -90 if key == pygame.K_w else 90
