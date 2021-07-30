@@ -35,7 +35,6 @@ tmp/**
 test-results*.xml
 xunit-test-results.xml
 build/ci/performance/performance-results.json
-!build/
 debug*.log
 debugpy*.log
 pydevd*.log
@@ -43,3 +42,7 @@ nodeLanguageServer/**
 nodeLanguageServer.*/**
 
 notpad.txt
+build/
+dist/
+env/
+exe/
